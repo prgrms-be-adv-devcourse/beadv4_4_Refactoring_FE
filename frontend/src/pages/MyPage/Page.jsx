@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import authApi from '../../services/api/authApi';
 import orderApi from '../../services/api/orderApi';
 import paymentApi from '../../services/api/paymentApi';
@@ -20,8 +20,13 @@ const toArray = (value) => {
 
 const MyPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, logout, refresh } = useAuth();
-    const [activeTab, setActiveTab] = useState('orders');
+    const resolveInitialTab = () => {
+        const queryTab = new URLSearchParams(location.search).get('tab');
+        return queryTab || 'orders';
+    };
+    const [activeTab, setActiveTab] = useState(resolveInitialTab);
     const [orders, setOrders] = useState([]);
     const [walletInfo, setWalletInfo] = useState(null);
     const [financialLogs, setFinancialLogs] = useState([]);
@@ -39,7 +44,7 @@ const MyPage = () => {
 
     const isSeller = user?.role === 'SELLER';
 
-    const fetchFinanceData = async (memberId) => {
+    const fetchFinanceData = async (memberId, sellerFlag = isSeller, currentTab = activeTab) => {
         const fetchWallet = async () => {
             try { return await paymentApi.getWallet(memberId); }
             catch (e) { console.error('Wallet fetch failed:', e); return null; }
@@ -58,7 +63,7 @@ const MyPage = () => {
         };
 
         const fetchMyProducts = async () => {
-            if (!isSeller || activeTab !== 'seller-center') return { content: [] };
+            if (!sellerFlag || currentTab !== 'seller-center') return { content: [] };
             try { return await productApi.getMyProducts(); }
             catch (e) { console.error('My products fetch failed:', e); return { content: [] }; }
         };
@@ -86,7 +91,7 @@ const MyPage = () => {
             ? pLogs
             : (pLogs?.paymentLog || pLogs?.data?.paymentLog || []);
         setPaymentLogs(normalizedPaymentLogs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-        if (activeTab === 'seller-center') {
+        if (currentTab === 'seller-center') {
             const normalizedProducts = Array.isArray(productsRes)
                 ? productsRes
                 : (productsRes?.content || productsRes?.data?.content || []);
@@ -137,7 +142,11 @@ const MyPage = () => {
                 }
 
                 if (currentUser?.memberId) {
-                    await fetchFinanceData(currentUser.memberId);
+                    await fetchFinanceData(
+                        currentUser.memberId,
+                        currentUser.role === 'SELLER',
+                        activeTab
+                    );
                 }
             } catch (err) {
                 console.error('MyPage init error:', err);
@@ -147,6 +156,13 @@ const MyPage = () => {
         };
         if (authApi.getAccessToken()) initMypage();
     }, []);
+
+    useEffect(() => {
+        const queryTab = new URLSearchParams(location.search).get('tab');
+        if (queryTab) {
+            setActiveTab(queryTab);
+        }
+    }, [location.search]);
 
     useEffect(() => {
         if (user?.memberId) {
@@ -227,6 +243,11 @@ const MyPage = () => {
         await fetchDailySettlementItems(user.memberId, dailyTarget);
     };
 
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        navigate(`/mypage?tab=${tab}`, { replace: true });
+    };
+
     const monthlyTotalPayout = monthlySettlements.reduce((sum, row) => sum + (row.totalPayoutAmount || 0), 0);
     const monthlyTotalPayment = monthlySettlements.reduce((sum, row) => sum + (row.totalPaymentAmount || 0), 0);
     const monthlyTotalFee = monthlySettlements.reduce((sum, row) => sum + (row.totalFeeAmount || 0), 0);
@@ -262,7 +283,7 @@ const MyPage = () => {
                 {['orders', 'wallet', isSeller ? 'seller-center' : 'be-seller'].filter(Boolean).map(tab => (
                     <button
                         key={tab}
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => handleTabChange(tab)}
                         style={{
                             padding: '15px 0',
                             fontSize: '1.1rem',

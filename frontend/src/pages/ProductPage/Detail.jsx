@@ -23,10 +23,21 @@ const ProductDetailPage = () => {
 
     useEffect(() => {
         let isMounted = true;
+        const numericId = Number(id);
+
+        if (!Number.isInteger(numericId) || numericId <= 0) {
+            if (isMounted) {
+                setLoading(false);
+                setProduct(null);
+            }
+            return () => {
+                isMounted = false;
+            };
+        }
 
         const fetchProduct = async () => {
             try {
-                const detail = await productApi.getProductDetail(id);
+                const detail = await productApi.getProductDetail(numericId);
                 let imageUrl = detail?.imageUrl || location.state?.product?.imageUrl || '';
                 let originalPrice = location.state?.product?.price || detail?.originalPrice || detail?.price;
 
@@ -34,7 +45,7 @@ const ProductDetailPage = () => {
                 if (!imageUrl && detail?.name) {
                     try {
                         const searched = await productApi.searchProducts(detail.name);
-                        const matched = (searched || []).find((item) => String(item.id) === String(id));
+                        const matched = (searched || []).find((item) => String(item.id) === String(numericId));
                         imageUrl = matched?.imageUrl || '';
                         originalPrice = matched?.price || originalPrice;
                     } catch (searchError) {
@@ -65,7 +76,10 @@ const ProductDetailPage = () => {
 
     useEffect(() => {
         let isMounted = true;
-        reviewApi.getProductReviewSummary(id)
+        const numericId = Number(id);
+        if (!Number.isInteger(numericId) || numericId <= 0) return;
+
+        reviewApi.getProductReviewSummary(numericId)
             .then((summary) => {
                 if (isMounted) setReviewSummary(summary || { averageRating: 0, reviewCount: 0 });
             })
@@ -152,7 +166,7 @@ const ProductDetailPage = () => {
                         </div>
                     </div>
 
-                        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '30px' }}>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '30px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}>
                             <button
                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}

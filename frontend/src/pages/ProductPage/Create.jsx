@@ -108,7 +108,7 @@ const ProductCreatePage = () => {
                 stock: Number(formData.stock),
             });
             alert('상품이 등록되었습니다.');
-            navigate('/products/create');
+            navigate('/mypage?tab=seller-center');
         } catch (error) {
             console.error(error);
 
@@ -126,6 +126,14 @@ const ProductCreatePage = () => {
         }
     };
 
+    const handleFormKeyDown = (e) => {
+        if (e.key !== 'Enter') return;
+        const tagName = (e.target?.tagName || '').toLowerCase();
+        if (tagName !== 'textarea') {
+            e.preventDefault();
+        }
+    };
+
     return (
         <div className="container" style={{ padding: '60px 20px', maxWidth: '1100px' }}>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -133,7 +141,7 @@ const ProductCreatePage = () => {
                 <p style={{ color: 'var(--text-secondary)' }}>새로운 상품을 등록하여 판매를 시작해보세요.</p>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '40px', borderRadius: '24px', boxShadow: 'var(--shadow-card)', border: '1px solid var(--border-subtle)' }}>
+            <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown} style={{ background: '#fff', padding: '40px', borderRadius: '24px', boxShadow: 'var(--shadow-card)', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'grid', gap: '25px' }}>
 
                     {/* Name */}

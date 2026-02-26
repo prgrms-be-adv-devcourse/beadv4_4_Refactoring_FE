@@ -20,29 +20,30 @@ import OrderDetailPage from './pages/OrderPage/OrderDetailPage';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/products" element={<ProductPage />} />
-          <Route path="/products/new" element={<ProductCreatePage />} />
-          <Route path="/products/:id/edit" element={<ProductEditPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/orders/new" element={<OrderPage />} />
-          <Route path="/orders/success/:orderId" element={<OrderSuccessPage />} />
-          <Route path="/payment/success" element={<PaymentSuccessPage />} />
-          <Route path="/payment/fail" element={<PaymentFailPage />} />
-          <Route path="/payment/:orderId" element={<PaymentPage />} />
-          <Route path="/settlement" element={<SettlementPage />} />
-          <Route path="/orders/:orderId" element={<OrderDetailPage />} />
-          <Route path="/mypage" element={<MyPage />} />
-        </Route>
-      </Routes>
-    </Router>
+      <Router>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/products" element={<ProductPage />} />
+            <Route path="/products/new" element={<ProductCreatePage />} />
+            <Route path="/products/create" element={<ProductCreatePage />} />
+            <Route path="/products/:id/edit" element={<ProductEditPage />} />
+            <Route path="/products/:id" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/orders/new" element={<OrderPage />} />
+            <Route path="/orders/success/:orderId" element={<OrderSuccessPage />} />
+            <Route path="/payment/success" element={<PaymentSuccessPage />} />
+            <Route path="/payment/fail" element={<PaymentFailPage />} />
+            <Route path="/payment/:orderId" element={<PaymentPage />} />
+            <Route path="/settlement" element={<SettlementPage />} />
+            <Route path="/orders/:orderId" element={<OrderDetailPage />} />
+            <Route path="/mypage" element={<MyPage />} />
+          </Route>
+        </Routes>
+      </Router>
   );
 }
 

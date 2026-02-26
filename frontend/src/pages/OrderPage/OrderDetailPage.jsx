@@ -286,7 +286,7 @@ const OrderDetailPage = () => {
                                             </span>
                                             </div>
                                             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
-                                                수량: {item.quantity ?? 0}개 | 개당 {formatPrice(item.price)}원
+                                                수량: {item.quantity ?? 0}개 | 개당 {formatPrice(item.salePrice ?? item.price)}원
                                             </p>
                                         </div>
                                     </div>

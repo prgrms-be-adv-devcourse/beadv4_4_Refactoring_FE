@@ -63,7 +63,7 @@ const ProductEditPage = () => {
                 stock: Number(formData.stock),
             });
             alert('상품 정보가 수정되었습니다.');
-            navigate('/mypage'); // Redirect back to MyPage
+            navigate('/mypage?tab=seller-center');
         } catch (error) {
             console.error(error);
             setErrorMessage('상품 수정에 실패했습니다.');
