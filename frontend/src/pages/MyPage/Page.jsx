@@ -44,9 +44,9 @@ const MyPage = () => {
 
     const isSeller = user?.role === 'SELLER';
 
-    const fetchFinanceData = async (memberId, sellerFlag = isSeller, currentTab = activeTab) => {
+    const fetchFinanceData = async (sellerFlag = isSeller, currentTab = activeTab) => {
         const fetchWallet = async () => {
-            try { return await paymentApi.getWallet(memberId); }
+            try { return await paymentApi.getWallet(); }
             catch (e) { console.error('Wallet fetch failed:', e); return null; }
         };
         const fetchWLogs = async () => {
@@ -143,7 +143,6 @@ const MyPage = () => {
 
                 if (currentUser?.memberId) {
                     await fetchFinanceData(
-                        currentUser.memberId,
                         currentUser.role === 'SELLER',
                         activeTab
                     );
@@ -166,7 +165,7 @@ const MyPage = () => {
 
     useEffect(() => {
         if (user?.memberId) {
-            fetchFinanceData(user.memberId);
+            fetchFinanceData();
             if (isSeller && activeTab === 'seller-center') {
                 fetchMonthlySettlements(user.memberId, monthlyTarget);
                 fetchDailySettlementItems(user.memberId, dailyTarget);
@@ -191,7 +190,7 @@ const MyPage = () => {
         try {
             await productApi.deleteProduct(id);
             alert('상품이 삭제되었습니다.');
-            fetchFinanceData(user.memberId);
+            fetchFinanceData();
         } catch (err) {
             alert('상품 삭제에 실패했습니다.');
         }
