@@ -12,9 +12,9 @@ const paymentApi = {
         });
     },
 
-    // 내 지갑 정보 조회
-    getWallet: async (memberId) => {
-        return apiClient.get(`/api/v1/payments/internal/wallets/${memberId}`);
+    // 내 지갑 정보 조회 (외부 API)
+    getWallet: async () => {
+        return apiClient.get('/api/v1/payments/wallet/me');
     },
 
     // 입출금 로그 조회
